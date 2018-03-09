@@ -2,6 +2,7 @@ package com.simpleblockchain.main;
 
 import com.simpleblockchain.constants.CoreConstants;
 import com.simpleblockchain.utils.DateUtil;
+import com.google.gson.*;
 
 public class SimpleBlockchainMain {
 
