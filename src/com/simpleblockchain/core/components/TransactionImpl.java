@@ -1,4 +1,4 @@
-package com.simpleblockchain.core;
+package com.simpleblockchain.core.components;
 
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -64,7 +64,7 @@ public class TransactionImpl implements Transaction{
 	}
 
 	// This Calculates the transaction hash (which will be used as its Id)
-	private String calulateHash() {
+	private String generateHash() {
 		sequence++; //increase the sequence to avoid 2 identical transactions having the same hash
 		return StringUtil.digestSha256(
 				StringUtil.getStringFromKey(sender) +
@@ -106,42 +106,42 @@ public class TransactionImpl implements Transaction{
 			
 			//generate transaction outputs:
 			float leftOver = getInputsValue() - value; //get value of inputs then the left over change:
-			transactionId = calulateHash();
-			outputs.add(new TransactionOutputImpl( this.reciepient, value,transactionId)); //send value to recipient
-			outputs.add(new TransactionOutputImpl( this.sender, leftOver,transactionId)); //send the left over 'change' back to sender		
+			transactionId = generateHash();
+			outputs.add(TransactionOutputImpl.createOutput( this.reciepient, value,transactionId)); //send value to recipient
+			outputs.add(TransactionOutputImpl.createOutput( this.sender, leftOver,transactionId)); //send the left over 'change' back to sender		
 				
 			//add outputs to Unspent list
-			for(TransactionOutput o : outputs) {
-				SimpleBlockchainMain.UTXOs.put(o.getId() , o);
+			for(TransactionOutput tranOutput : outputs) {
+				SimpleBlockchainMain.UTXOs.put(tranOutput.getId() , tranOutput);
 			}
 			
 			//remove transaction inputs from UTXO lists as spent:
-			for(TransactionInput i : inputs) {
-				if(i.getUtxo() == null) continue; //if Transaction can't be found skip it 
-				SimpleBlockchainMain.UTXOs.remove(i.getUtxo().getId());
+			for(TransactionInput tranInput : inputs) {
+				if(tranInput.getUtxo() == null) continue; //if Transaction can't be found skip it 
+				SimpleBlockchainMain.UTXOs.remove(tranInput.getUtxo().getId());
 			}
 			
 			return true;
 		}
 	
 	//returns sum of inputs(UTXOs) values
-		public float getInputsValue() {
-			float total = 0;
-			for(TransactionInput i : inputs) {
-				if(i.getUtxo() == null) continue; //if Transaction can't be found skip it 
-				total += i.getUtxo().getValue();
+	public float getInputsValue() {
+		float total = 0;
+		for(TransactionInput tranInput : inputs) {
+			if(tranInput.getUtxo() == null) {
+				continue; 
 			}
-			return total;
+			total += tranInput.getUtxo().getValue();
 		}
+		return total;
+	}
 
 	//returns sum of outputs:
-		public float getOutputsValue() {
-			float total = 0;
-			for(TransactionOutput o : outputs) {
-				total += o.getValue();
-			}
-			return total;
+	public float getOutputsValue() {
+		float total = 0;
+		for(TransactionOutput tranOutput : outputs) {
+			total += tranOutput.getValue();
 		}
-		
-		
+		return total;
+	}	
 }

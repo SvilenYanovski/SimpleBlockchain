@@ -1,4 +1,4 @@
-package com.simpleblockchain.core;
+package com.simpleblockchain.core.components;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -19,7 +19,7 @@ public class BlockImpl implements Block{
 	public BlockImpl(String previousHash ) {
 		this.prevHash = previousHash;
 		this.timeStamp = new Date().getTime();
-		this.hash = calculateHash();
+		this.hash = generateHash();
 	}
 
 	public String getHash() {
@@ -34,7 +34,7 @@ public class BlockImpl implements Block{
 		return this.transactions;
 	}
 
-	public String calculateHash() {
+	public String generateHash() {
 		return StringUtil.digestSha256( 
 				prevHash +
 				Long.toString(timeStamp) +
@@ -48,23 +48,23 @@ public class BlockImpl implements Block{
 		String target = new String(new char[difficulty]).replace('\0', '0');
 		while(!hash.substring( 0, difficulty).equals(target)) {
 			nonce ++;
-			hash = calculateHash();
+			hash = generateHash();
 		}
 		System.out.println("Block Mined!!! : " + hash);
 	}
 	
 	//Add transactions to this block
-		public boolean addTransaction(Transaction transaction) {
-			//process transaction and check if valid, unless block is genesis block then ignore.
-			if(transaction == null) return false;		
-			if((prevHash != "0")) {
-				if((transaction.processTransaction() != true)) {
-					System.out.println("Transaction failed to process. Discarded.");
-					return false;
-				}
+	public boolean addTransaction(Transaction transaction) {
+		//process transaction and check if valid, unless block is genesis block then ignore.
+		if(transaction == null) return false;		
+		if((prevHash != "0")) {
+			if((transaction.processTransaction() != true)) {
+				System.out.println("Transaction failed to process. Discarded.");
+				return false;
 			}
-			transactions.add(transaction);
-			System.out.println("Transaction Successfully added to Block");
-			return true;
 		}
+		transactions.add(transaction);
+		System.out.println("Transaction Successfully added to Block");
+		return true;
+	}
 }

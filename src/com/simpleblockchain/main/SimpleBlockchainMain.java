@@ -1,10 +1,10 @@
 package com.simpleblockchain.main;
 
 import com.simpleblockchain.constants.CoreConstants;
-import com.simpleblockchain.core.BlockImpl;
-import com.simpleblockchain.core.TransactionImpl;
-import com.simpleblockchain.core.TransactionOutputImpl;
-import com.simpleblockchain.core.WalletImpl;
+import com.simpleblockchain.core.components.BlockImpl;
+import com.simpleblockchain.core.components.TransactionImpl;
+import com.simpleblockchain.core.components.TransactionOutputImpl;
+import com.simpleblockchain.core.components.WalletImpl;
 import com.simpleblockchain.core.contracts.Block;
 import com.simpleblockchain.core.contracts.Transaction;
 import com.simpleblockchain.core.contracts.TransactionInput;
@@ -44,7 +44,8 @@ public class SimpleBlockchainMain {
 		genesisTransaction.generateSignature(coinbase.getPrivateKey());	 //manually sign the genesis transaction	
 		genesisTransaction.setTransactionId("0"); //manually set the transaction id
 		List<TransactionOutput> genesisOutputs = genesisTransaction.getOutputs();
-		genesisOutputs.add(new TransactionOutputImpl(genesisTransaction.getReciepient(), genesisTransaction.getValue(), genesisTransaction.getTransactionId()));
+		genesisOutputs.add(TransactionOutputImpl.createOutput(genesisTransaction.getReciepient(), 
+				genesisTransaction.getValue(), genesisTransaction.getTransactionId()));
 		genesisTransaction.setOutputs(genesisOutputs); //manually add the Transactions Output
 		UTXOs.put(genesisTransaction.getOutputs().get(0).getId(), genesisTransaction.getOutputs().get(0)); //its important to store our first transaction in the UTXOs list.
 		
@@ -120,7 +121,7 @@ public class SimpleBlockchainMain {
 		for(int i=1; i < blockchain.size(); i++) {
 			currentBlock = blockchain.get(i);
 			previousBlock = blockchain.get(i-1);
-			if(!currentBlock.getHash().equals(currentBlock.calculateHash()) ){
+			if(!currentBlock.getHash().equals(currentBlock.generateHash()) ){
 				System.out.println("Current Hashe is incorrect!");			
 				return false;
 			}

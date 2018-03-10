@@ -1,4 +1,4 @@
-package com.simpleblockchain.core;
+package com.simpleblockchain.core.components;
 
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;

@@ -1,4 +1,4 @@
-package com.simpleblockchain.core;
+package com.simpleblockchain.core.components;
 
 import com.simpleblockchain.core.contracts.TransactionInput;
 import com.simpleblockchain.core.contracts.TransactionOutput;
